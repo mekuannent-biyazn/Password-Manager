@@ -270,36 +270,6 @@ async function googleAuth(req, res, next) {
   }
 }
 
-// // Password reset (simulation via console)
-// export const forgotPassword = async (req, res) => {
-// const { email } = req.body;
-// const user = await User.findOne({ email });
-// if (!user) return res.json({ message: 'If the email exists, a reset link has been sent.' });
-
-// const token = crypto.randomBytes(20).toString('hex');
-// user.resetTokenHash = hashToken(token);
-// user.resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000);
-// await user.save();
-
-// await sendEmail({ to: email, subject: 'Password Reset', text: `Your reset token is: ${token}` });
-// res.json({ message: 'Reset instructions sent (simulation).' });
-// };
-
-// export const resetPassword = async (req, res) => {
-// const { token, newPassword } = req.body;
-// if (!token || !newPassword) return res.status(400).json({ message: 'token and newPassword required' });
-
-// const user = await User.findOne({ resetTokenHash: hashToken(token), resetTokenExpiry: { $gt: new Date() } }).select('+password');
-// if (!user) return res.status(400).json({ message: 'Invalid or expired token' });
-
-// user.password = newPassword;
-// user.resetTokenHash = undefined;
-// user.resetTokenExpiry = undefined;
-// await user.save();
-
-// res.json({ message: 'Password has been reset' });
-// };
-
 async function logout(req, res) {
   req.session.destroy((err) => {
     if (err) return res.status(500).json({ message: "Error Logout" });
