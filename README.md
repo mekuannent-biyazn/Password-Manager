@@ -128,17 +128,20 @@ These routes are restricted to Admin users only.
   Query Parameters:
 - reveal=true → returns the real decrypted password.
 - Access: Authenticated users only.
-  Body example:{
-  "id": "68c14640822a18392b50c985",
-  "title": "facebook",
-  "username": "genico@fb",
-  "url": "",
-  "notes": "this is the password for facebook created at fitst time",
-  "folder": "facebook",
-  "createdAt": "2025-09-10T09:34:56.212Z",
-  "updatedAt": "2025-09-10T19:57:54.917Z",
-  "password": "212121"
+- **Response Example:**
+  ```json
+  {
+    "id": "68c14640822a18392b50c985",
+    "title": "facebook",
+    "username": "genico@fb",
+    "url": "",
+    "notes": "this is the password for facebook created at fitst time",
+    "folder": "facebook",
+    "createdAt": "2025-09-10T09:34:56.212Z",
+    "updatedAt": "2025-09-10T19:57:54.917Z",
+    "password": "212121"
   }
+  ```
 
 6. **PATCH** `/api/password/:id`
 
