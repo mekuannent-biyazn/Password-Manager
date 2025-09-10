@@ -23,7 +23,7 @@
 - **Action**: Change a user’s role (e.g., user → admin).
 - **Response Example:**
 
-`````json
+```json
 {
 "userId": "68c145fb822a18392b50c981",
 "role": "admin"
