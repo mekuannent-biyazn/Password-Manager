@@ -25,9 +25,10 @@
 
 `````json
 {
-  "userId": "68c145fb822a18392b50c981",
-  "role": "admin"
-  }```
+"userId": "68c145fb822a18392b50c981",
+"role": "admin"
+}```
+
 - **Access**: Admin only.
 
 4. **DELETE** `/api/admin/users/:userId`
@@ -50,6 +51,8 @@
   "password": "StrongPass123",
   "confirmPassword":"StrongPass123"
   }```
+`````
+
 `````
 
 2. **POST** `/api/users/login`
@@ -184,3 +187,4 @@
 
 3. **DELETE** `/api/password/admin/:id`
    - **Action**: Delete any vault item by ID.
+`````
