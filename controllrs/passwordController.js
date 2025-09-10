@@ -1,8 +1,8 @@
 const { encryptForUser, decryptForUser } = require("../utils/crypto");
 const savedPassword = require("../models/savedPassword");
 const asyncHandler = require("express-async-handler");
-// const Vault = require("../models/VaultItem");
 
+// create password item
 exports.createItem = async (req, res, next) => {
   try {
     const {
@@ -44,20 +44,6 @@ exports.createItem = async (req, res, next) => {
 
     const enc = encryptForUser(req.user._id, password);
 
-    // const saved = await savedPassword.findOne({
-    //   owner: req.user._id,
-    //   title,
-    //   password: enc.password,
-    //   iv: enc.iv,
-    //   tag: enc.tag,
-    // });
-
-    // if (saved) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "this password is already saved" });
-    // }
-
     const item = await savedPassword.create({
       owner: req.user._id,
       title,
@@ -75,6 +61,7 @@ exports.createItem = async (req, res, next) => {
   }
 };
 
+// get all password items
 exports.listItems = async (req, res, next) => {
   try {
     const { q = "", folder, page = 1, limit = 20 } = req.query;
@@ -100,7 +87,6 @@ exports.listItems = async (req, res, next) => {
       savedPassword.countDocuments(filter),
     ]);
 
-    // Do not send plaintext; clients can request one item's password when needed
     res.json({
       total,
       page: Number(page),
@@ -121,6 +107,7 @@ exports.listItems = async (req, res, next) => {
   }
 };
 
+// get single item with decrypted password
 exports.getItem = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -158,7 +145,7 @@ exports.getItem = async (req, res, next) => {
   }
 };
 
-// Update item (re-encrypt on password change)
+// update saved password items
 exports.updateItem = async (req, res, next) => {
   try {
     const { id } = req.params;

@@ -22,6 +22,6 @@ router.post("/verify-otp", verifyOTP);
 router.post("/resend-otp", resendOTP);
 router.post("/logout", protect, logout);
 
-router.post("/google", googleAuth); // expects { idToken }
+router.post("/google", googleAuth);
 
 module.exports = router;

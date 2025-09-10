@@ -27,7 +27,7 @@ exports.listUsers = async (req, res, next) => {
 // Change a user's role
 exports.setRole = async (req, res, next) => {
   try {
-    const { userId, role } = req.body; // 'admin' or 'user'
+    const { userId, role } = req.body;
     if (!["admin", "user"].includes(role))
       return res.status(400).json({ message: "Invalid role" });
 
@@ -55,7 +55,7 @@ exports.setRole = async (req, res, next) => {
   }
 };
 
-// Danger: delete user and their vault items
+// delete user and their vault items
 exports.deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;

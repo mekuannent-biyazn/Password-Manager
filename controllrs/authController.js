@@ -28,6 +28,7 @@ const respondWithAuth = (res, user, status = 200) => {
   });
 };
 
+// For OTP send
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -38,6 +39,7 @@ const transporter = nodemailer.createTransport({
 
 const generateOTP = () => crypto.randomInt(100000, 999999).toString();
 
+// user registratio
 async function register(req, res, next) {
   try {
     const { name, email, password, confirmPassword } = req.body;
@@ -102,6 +104,7 @@ async function register(req, res, next) {
   }
 }
 
+// users verify OTP
 async function verifyOTP(req, res) {
   try {
     const { email, otp } = req.body;
@@ -128,6 +131,7 @@ async function verifyOTP(req, res) {
   }
 }
 
+// resend OTP if expir
 async function resendOTP(req, res) {
   try {
     const { email } = req.body;
@@ -155,6 +159,7 @@ async function resendOTP(req, res) {
   }
 }
 
+// user login
 async function login(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -185,6 +190,7 @@ async function login(req, res, next) {
   }
 }
 
+// users can view itself
 async function getMe(req, res, next) {
   try {
     const me = await User.findById(req.user.id)
@@ -199,6 +205,7 @@ async function getMe(req, res, next) {
   }
 }
 
+// users can change the password
 async function changePassword(req, res, next) {
   try {
     const { currentPass, newPass } = req.body;

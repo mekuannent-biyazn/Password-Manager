@@ -4,7 +4,6 @@ const controller = require("../controllrs/passwordController");
 
 const router = express.Router();
 
-// all require auth
 router.use(protect);
 
 router.get("/admin/all", admin, controller.getAllVaultItems);

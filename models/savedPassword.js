@@ -22,9 +22,8 @@ const passwordSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// passwordSchema.index({ owner: 1, title: 1 });
 passwordSchema.index(
-  { owner: 1, title: 1, password: 1, iv: 1, tag: 1 },
+  { owner: 1, title: 1, passwordEnc: 1, iv: 1, tag: 1 },
   { unique: true }
 );
 

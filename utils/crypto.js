@@ -6,7 +6,6 @@ function deriveKey(userId) {
   if (!masterHex) throw new Error("MASTER_KEY_HEX not set");
   const master = Buffer.from(masterHex, "hex"); // 32 bytes recommended
   const salt = Buffer.from(String(userId));
-  // scrypt: cost ~ N=2^14 by default; sync for simplicity here
   return crypto.scryptSync(master, salt, 32); // AES-256 key
 }
 
