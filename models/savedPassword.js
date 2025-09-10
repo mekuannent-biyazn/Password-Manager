@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const vaultSchema = new mongoose.Schema(
+const passwordSchema = new mongoose.Schema(
   {
     owner: {
       type: mongoose.Schema.Types.ObjectId,
@@ -22,8 +22,12 @@ const vaultSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-vaultSchema.index({ owner: 1, title: 1 });
+// passwordSchema.index({ owner: 1, title: 1 });
+passwordSchema.index(
+  { owner: 1, title: 1, password: 1, iv: 1, tag: 1 },
+  { unique: true }
+);
 
-const Vault = mongoose.model("Vaultitem", vaultSchema);
+const Passwordmngt = mongoose.model("SavedPassword", passwordSchema);
 
-module.exports = Vault;
+module.exports = Passwordmngt;

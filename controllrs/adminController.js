@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const VaultItem = require("../models/VaultItem");
+const savedPassword = require("../models/savedPassword");
 
 // List users with counts
 exports.listUsers = async (req, res, next) => {
@@ -7,7 +7,7 @@ exports.listUsers = async (req, res, next) => {
     const users = await User.find({})
       .select("_id name email role createdAt")
       .lean();
-    const counts = await VaultItem.aggregate([
+    const counts = await savedPassword.aggregate([
       { $group: { _id: "$owner", total: { $sum: 1 } } },
     ]);
 
@@ -75,7 +75,7 @@ exports.deleteUser = async (req, res, next) => {
           .json({ message: "Cannot delete the last admin" });
     }
 
-    await VaultItem.deleteMany({ owner: userId });
+    await savedPassword.deleteMany({ owner: userId });
     await target.deleteOne();
     res.json({ message: "User and their data deleted" });
   } catch (err) {

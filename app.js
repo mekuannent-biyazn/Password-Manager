@@ -3,7 +3,7 @@ const helmet = require("helmet");
 const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
 const userRoute = require("./routes/authRoute");
 const { globalLimiter } = require("./middlewares/rateLimiteMiddleware");
-const vaultRoute = require("./routes/vaultRoute");
+const passwordRoute = require("./routes/passwordRoute");
 const adminRoute = require("./routes/adminRoute");
 const session = require("express-session");
 const app = express();
@@ -26,7 +26,7 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/users", userRoute);
-app.use("/api/vault", vaultRoute);
+app.use("/api/password", passwordRoute);
 app.use("/api/admin", adminRoute);
 
 app.use(notFound);

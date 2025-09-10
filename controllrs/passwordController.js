@@ -1,7 +1,7 @@
 const { encryptForUser, decryptForUser } = require("../utils/crypto");
-const vaultItem = require("../models/VaultItem");
+const savedPassword = require("../models/savedPassword");
 const asyncHandler = require("express-async-handler");
-const Vault = require("../models/VaultItem");
+// const Vault = require("../models/VaultItem");
 
 exports.createItem = async (req, res, next) => {
   try {
@@ -19,8 +19,46 @@ exports.createItem = async (req, res, next) => {
         .status(400)
         .json({ message: "title and passwored is required" });
 
+    // 🔍 Find all items for this user with the same title
+    const existingItems = await savedPassword.find({
+      owner: req.user._id,
+      title,
+    });
+
+    // 🔐 Decrypt and check if password already exists
+    for (const item of existingItems) {
+      if (!item.passwordEnc || !item.iv || !item.tag) continue;
+
+      const decrypted = decryptForUser(req.user._id, {
+        passwordEnc: item.passwordEnc,
+        iv: item.iv,
+        tag: item.tag,
+      });
+
+      if (decrypted === password) {
+        return res
+          .status(400)
+          .json({ message: "this password is already saved" });
+      }
+    }
+
     const enc = encryptForUser(req.user._id, password);
-    const item = await vaultItem.create({
+
+    // const saved = await savedPassword.findOne({
+    //   owner: req.user._id,
+    //   title,
+    //   password: enc.password,
+    //   iv: enc.iv,
+    //   tag: enc.tag,
+    // });
+
+    // if (saved) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "this password is already saved" });
+    // }
+
+    const item = await savedPassword.create({
       owner: req.user._id,
       title,
       username,
@@ -53,13 +91,13 @@ exports.listItems = async (req, res, next) => {
 
     const skip = (Number(page) - 1) * Number(limit);
     const [items, total] = await Promise.all([
-      vaultItem
+      savedPassword
         .find(filter)
         .sort({ updatedAt: -1 })
         .skip(skip)
         .limit(Number(limit))
         .lean(),
-      vaultItem.countDocuments(filter),
+      savedPassword.countDocuments(filter),
     ]);
 
     // Do not send plaintext; clients can request one item's password when needed
@@ -87,7 +125,7 @@ exports.getItem = async (req, res, next) => {
   try {
     const { id } = req.params;
     const reveal = String(req.query.reveal || "false").toLowerCase() === "true";
-    const item = await vaultItem
+    const item = await savedPassword
       .findOne({
         _id: id,
         owner: req.user._id,
@@ -124,7 +162,7 @@ exports.getItem = async (req, res, next) => {
 exports.updateItem = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const item = await vaultItem.findOne({ _id: id, owner: req.user._id });
+    const item = await savedPassword.findOne({ _id: id, owner: req.user._id });
     if (!item) return res.status(404).json({ message: "Item not found" });
 
     const { title, username, password, url, notes, folder } = req.body;
@@ -153,7 +191,7 @@ exports.updateItem = async (req, res, next) => {
 exports.deleteItem = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const item = await vaultItem.findOneAndDelete({
+    const item = await savedPassword.findOneAndDelete({
       _id: id,
       owner: req.user._id,
     });
@@ -167,7 +205,7 @@ exports.deleteItem = async (req, res, next) => {
 // Export all items (with decrypted passwords)
 exports.exportAll = async (req, res, next) => {
   try {
-    const items = await vaultItem.find({ owner: req.user._id }).lean();
+    const items = await savedPassword.find({ owner: req.user._id }).lean();
     const data = items.map((i) => ({
       title: i.title,
       username: i.username,
@@ -190,13 +228,13 @@ exports.exportAll = async (req, res, next) => {
 
 //  Admin: Get ALL vault items
 exports.getAllVaultItems = asyncHandler(async (req, res) => {
-  const items = await Vault.find({});
+  const items = await savedPassword.find({});
   res.json(items);
 });
 
 //  Admin: Update any vault item
 exports.updateAnyVaultItem = asyncHandler(async (req, res) => {
-  const item = await Vault.findById(req.params.id);
+  const item = await savedPassword.findById(req.params.id);
 
   if (!item) {
     res.status(404);
@@ -213,7 +251,7 @@ exports.updateAnyVaultItem = asyncHandler(async (req, res) => {
 
 //  Admin: Delete any vault item
 exports.deleteAnyVaultItem = asyncHandler(async (req, res) => {
-  const item = await Vault.findById(req.params.id);
+  const item = await savedPassword.findById(req.params.id);
 
   if (!item) {
     res.status(404);
